@@ -18,3 +18,5 @@
 用 Android Studio 打开工程，选择已安装的 Android SDK 后运行 `gradlew.bat :app:assembleDebug`。
 
 题库文件格式见 [docs/question-format.md](docs/question-format.md)。
+
+团队协作的公共模型、Repository、Intent 和设置键约定见 [docs/interfaces.md](docs/interfaces.md)。

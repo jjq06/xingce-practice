@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        findViewById(R.id.start_practice).setOnClickListener(v -> open(PracticeActivity.class));
+        findViewById(R.id.start_practice).setOnClickListener(v -> startPractice());
         findViewById(R.id.import_questions).setOnClickListener(v -> open(ImportActivity.class));
         findViewById(R.id.wrong_book).setOnClickListener(v -> open(WrongBookActivity.class));
         findViewById(R.id.history).setOnClickListener(v -> open(HistoryActivity.class));
@@ -25,5 +25,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void open(Class<?> destination) {
         startActivity(new Intent(this, destination));
+    }
+
+    private void startPractice() {
+        Intent intent = new Intent(this, PracticeActivity.class);
+        intent.putExtra(AppContract.EXTRA_PRACTICE_MODE, AppContract.MODE_NORMAL);
+        startActivity(intent);
     }
 }

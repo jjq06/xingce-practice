@@ -22,7 +22,18 @@ public class QuestionRepository {
         }
     }
 
+    /** 返回已导入的分类名称，按名称升序排列。 */
+    public List<String> categories() {
+        List<String> result = new ArrayList<>();
+        try (Cursor cursor = helper.getReadableDatabase().rawQuery(
+                "SELECT DISTINCT category FROM questions ORDER BY category", null)) {
+            while (cursor.moveToNext()) result.add(cursor.getString(0));
+        }
+        return result;
+    }
+
     public List<Question> findByCategory(String category, int limit) {
+        if (limit <= 0) throw new IllegalArgumentException("limit 必须大于 0");
         List<Question> result = new ArrayList<>();
         String selection = category == null ? null : "category = ?";
         String[] args = category == null ? null : new String[]{category};
