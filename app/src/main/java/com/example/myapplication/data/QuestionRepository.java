@@ -7,12 +7,34 @@ import android.database.sqlite.SQLiteDatabase;
 import com.example.myapplication.model.Question;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.LinkedHashMap;
 
 public class QuestionRepository {
     private final AppDatabaseHelper helper;
 
     public QuestionRepository(Context context) {
-        helper = new AppDatabaseHelper(context);
+        helper = AppDatabaseHelper.getInstance(context);
+    }
+
+    QuestionRepository(AppDatabaseHelper helper) { this.helper = helper; }
+
+    public int count(String category) {
+        if (category == null) return count();
+        try (Cursor cursor = helper.getReadableDatabase().rawQuery(
+                "SELECT COUNT(*) FROM questions WHERE category = ?", new String[]{category})) {
+            cursor.moveToFirst();
+            return cursor.getInt(0);
+        }
+    }
+
+    public Map<String, Integer> categoryCounts() {
+        Map<String, Integer> counts = new LinkedHashMap<>();
+        try (Cursor cursor = helper.getReadableDatabase().rawQuery(
+                "SELECT category, COUNT(*) FROM questions GROUP BY category ORDER BY category", null)) {
+            while (cursor.moveToNext()) counts.put(cursor.getString(0), cursor.getInt(1));
+        }
+        return counts;
     }
 
     public int count() {
@@ -57,24 +79,38 @@ public class QuestionRepository {
         db.beginTransaction();
         try {
             for (Question question : questions) {
-                ContentValues values = new ContentValues();
-                values.put("category", question.category);
-                values.put("stem", question.stem);
-                values.put("option_a", question.optionA);
-                values.put("option_b", question.optionB);
-                values.put("option_c", question.optionC);
-                values.put("option_d", question.optionD);
-                values.put("answer", question.answer);
-                values.put("explanation", question.explanation);
-                values.put("source", question.source);
-                values.put("fingerprint", question.fingerprint);
-                if (db.insertWithOnConflict("questions", null, values, SQLiteDatabase.CONFLICT_IGNORE) != -1) inserted++;
+                if (insert(db, question) != -1) inserted++;
             }
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
         }
         return inserted;
+    }
+
+    static long insert(SQLiteDatabase db, Question question) {
+        if (question == null || question.category == null || question.category.trim().isEmpty()
+                || question.stem == null || question.stem.trim().isEmpty()
+                || question.optionA == null || question.optionA.trim().isEmpty()
+                || question.optionB == null || question.optionB.trim().isEmpty()
+                || question.optionC == null || question.optionC.trim().isEmpty()
+                || question.optionD == null || question.optionD.trim().isEmpty()
+                || question.answer == null || !question.answer.matches("[ABCD]")) {
+            throw new IllegalArgumentException("题目必填字段为空或答案不合法");
+        }
+        question.fingerprint = QuestionImporter.fingerprint(question);
+        ContentValues values = new ContentValues();
+        values.put("category", question.category);
+        values.put("stem", question.stem);
+        values.put("option_a", question.optionA);
+        values.put("option_b", question.optionB);
+        values.put("option_c", question.optionC);
+        values.put("option_d", question.optionD);
+        values.put("answer", question.answer);
+        values.put("explanation", question.explanation == null ? "" : question.explanation);
+        values.put("source", question.source == null ? "" : question.source);
+        values.put("fingerprint", question.fingerprint);
+        return db.insertWithOnConflict("questions", null, values, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
     private Question read(Cursor cursor) {
