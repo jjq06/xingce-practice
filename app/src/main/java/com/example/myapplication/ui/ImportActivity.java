@@ -1,42 +1,55 @@
 package com.example.myapplication.ui;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.ViewModelProvider;
 import com.example.myapplication.R;
-import com.example.myapplication.data.QuestionImporter;
-import com.example.myapplication.data.QuestionRepository;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 
 public class ImportActivity extends AppCompatActivity {
-    private TextView status;
+    private ImportViewModel model;
     private final ActivityResultLauncher<Intent> picker = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() != Activity.RESULT_OK || result.getData() == null || result.getData().getData() == null) return;
-                try (InputStreamReader reader = new InputStreamReader(
-                        getContentResolver().openInputStream(result.getData().getData()), StandardCharsets.UTF_8)) {
-                    QuestionImporter.ParseResult parsed = new QuestionImporter().parse(reader, "用户导入");
-                    int inserted = new QuestionRepository(this).insertAll(parsed.questions);
-                    status.setText("新增 " + inserted + " 题；格式错误 " + parsed.errors.size() + " 行\n" + String.join("\n", parsed.errors));
-                } catch (Exception e) {
-                    status.setText("导入失败：" + e.getMessage());
-                }
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null
+                        && result.getData().getData() != null) model.importFile(result.getData().getData());
             });
 
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
         setContentView(R.layout.activity_import);
-        status = findViewById(R.id.import_status);
-        findViewById(R.id.pick_file).setOnClickListener(v -> {
+        View root = findViewById(R.id.import_root);
+        ViewCompat.setOnApplyWindowInsetsListener(root, (view, insets) -> {
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            view.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            return insets;
+        });
+        TextView status = findViewById(R.id.import_status);
+        View button = findViewById(R.id.pick_file);
+        model = new ViewModelProvider(this).get(ImportViewModel.class);
+        model.state().observe(this, value -> {
+            status.setText(value.message);
+            button.setEnabled(!value.busy);
+            findViewById(R.id.import_progress).setVisibility(value.busy ? View.VISIBLE : View.GONE);
+        });
+        button.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.setType("text/plain");
+            // 部分文件管理器把 TXT 标为 application/octet-stream，选择后按文件名和编码校验。
+            intent.setType("*/*");
             intent.addCategory(Intent.CATEGORY_OPENABLE);
-            picker.launch(intent);
+            try {
+                picker.launch(intent);
+            } catch (ActivityNotFoundException e) {
+                status.setText("未找到系统文件选择器，请启用文件管理应用后重试。");
+            }
         });
     }
 }
