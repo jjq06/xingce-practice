@@ -33,6 +33,15 @@ public class QuestionImporterTest {
         assertTrue(result.errors.get(0).contains("题干不能为空"));
         assertTrue(result.errors.get(0).contains("选项A不能为空"));
     }
+    @Test public void reportsEmptyTabSeparatedRowsButSkipsBlankLines() throws Exception {
+        QuestionImporter.ParseResult result = parse("  \n\t\t\t\t\t\t\t\n" + VALID);
+        assertEquals(1, result.questions.size());
+        assertEquals(1, result.errors.size());
+        String error = result.errors.get(0);
+        assertTrue(error.startsWith("第 2 行"));
+        assertTrue(error.contains("类别不能为空"));
+        assertTrue(error.contains("答案不能为空"));
+    }
     @Test public void rejectsMultipleAnswersAndExtraColumns() throws Exception {
         assertEquals(1, parse(VALID.replace("B\t解析", "AB\t解析")).errors.size());
         assertEquals(1, parse(VALID + "\t多列").errors.size());

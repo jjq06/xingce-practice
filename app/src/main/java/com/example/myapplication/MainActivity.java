@@ -55,11 +55,12 @@ public class MainActivity extends AppCompatActivity {
                     row.setTextSize(16);
                     row.setGravity(Gravity.CENTER_VERTICAL);
                     row.setBackgroundResource(R.drawable.bg_home_category);
-                    row.setPadding(dp(16), 0, dp(16), 0);
+                    row.setPadding(dp(16), dp(8), dp(16), dp(8));
+                    row.setMinimumHeight(dp(52));
                     row.setClickable(true);
                     row.setFocusable(true);
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT, dp(52));
+                            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                     params.topMargin = dp(8);
                     row.setLayoutParams(params);
                     row.setOnClickListener(v -> startPractice(entry.getKey()));
