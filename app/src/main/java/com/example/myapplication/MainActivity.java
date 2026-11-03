@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.os.Bundle;
 import android.view.View;
+import android.view.Gravity;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -24,6 +25,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setStatusBarColor(getColor(R.color.home_mint));
+        getWindow().setNavigationBarColor(getColor(R.color.white));
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         setContentView(R.layout.activity_main);
         questionCount = findViewById(R.id.question_count);
         categories = findViewById(R.id.category_list);
@@ -45,12 +50,23 @@ public class MainActivity extends AppCompatActivity {
                 int total = 0;
                 for (Map.Entry<String, Integer> entry : counts.entrySet()) {
                     total += entry.getValue();
-                    Button button = new Button(this);
-                    button.setText(getString(R.string.category_entry, entry.getKey(), entry.getValue()));
-                    button.setOnClickListener(v -> startPractice(entry.getKey()));
-                    categories.addView(button);
+                    TextView row = new TextView(this);
+                    row.setText(getString(R.string.category_entry, entry.getKey(), entry.getValue()) + "   ›");
+                    row.setTextColor(getColor(R.color.home_ink));
+                    row.setTextSize(16);
+                    row.setGravity(Gravity.CENTER_VERTICAL);
+                    row.setBackgroundResource(R.drawable.bg_home_category);
+                    row.setPadding(dp(16), 0, dp(16), 0);
+                    row.setClickable(true);
+                    row.setFocusable(true);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT, dp(52));
+                    params.topMargin = dp(8);
+                    row.setLayoutParams(params);
+                    row.setOnClickListener(v -> startPractice(entry.getKey()));
+                    categories.addView(row);
                 }
-                questionCount.setText(getString(R.string.question_count, total));
+                questionCount.setText(String.valueOf(total));
                 startPractice.setEnabled(total > 0);
                 findViewById(R.id.empty_categories).setVisibility(total == 0 ? View.VISIBLE : View.GONE);
             });
@@ -59,6 +75,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void open(Class<?> destination) {
         startActivity(new Intent(this, destination));
+    }
+
+    private int dp(int value) {
+        return Math.round(value * getResources().getDisplayMetrics().density);
     }
 
     private void startPractice(String category) {

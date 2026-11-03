@@ -2,4 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="home_ink">#202C2B</color>
+    <color name="home_muted">#72817F</color>
+    <color name="home_accent_dark">#087B64</color>
+    <color name="home_mint">#CFF5ED</color>
 </resources>
