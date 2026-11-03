@@ -10,6 +10,7 @@ import com.example.myapplication.AppContract;
 import com.example.myapplication.R;
 import com.example.myapplication.data.PracticeRepository;
 import com.example.myapplication.model.PracticeRecord;
+import com.example.myapplication.practice.ScoreCalculator;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
@@ -62,7 +63,7 @@ public class HistoryActivity extends AppCompatActivity {
                     date.setPadding(0, dp(4), 0, dp(10));
                     card.addView(date);
 
-                    int percent = record.questionCount == 0 ? 0 : record.correctCount * 100 / record.questionCount;
+                    int percent = ScoreCalculator.accuracyPercent(record.correctCount, record.questionCount);
                     TextView summary = new TextView(this);
                     summary.setText(getString(R.string.history_summary, record.score, record.correctCount,
                             record.questionCount, percent, record.durationSeconds));

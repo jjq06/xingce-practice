@@ -35,7 +35,7 @@ public class QuestionImporter {
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
                 if (lineNumber == 1 && line.startsWith("\uFEFF")) line = line.substring(1);
-                if (line.trim().isEmpty()) continue;
+                if (line.indexOf('\t') < 0 && line.trim().isEmpty()) continue;
                 String[] fields = line.split("\t", -1);
                 if (fields.length != 8) {
                     result.errors.add("第 " + lineNumber + " 行：需要 8 个制表符分隔字段");
