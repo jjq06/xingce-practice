@@ -31,7 +31,7 @@
 
 首次启动后，首页应显示三类示例题。点击“综合练习”或某个分类开始作答；提交后查看成绩与解析，再从“历史记录”打开旧结果。答错或未答的题目会出现在“错题本”，可点击“重练错题”。“设置”可调整下一次练习的题数。
 
-要导入自己的题目，在首页选择“导入题目”，选取符合 [题库格式说明](docs/question-format.md) 的 UTF-8 TXT 文件。可从 [导入模板](docs/import-template.txt) 开始编辑；[错误示例](docs/import-errors-example.txt) 可用于检查行号提示。文件每行一题，八列顺序为：
+要导入自己的题目，在首页选择“导入题目”，选取符合 [题库格式说明](docs/question-format.md) 的 UTF-8 TXT 文件。可直接用[原创 30 题题库](docs/行测练习题库_原创30题.txt)体验导入；它与内置示例题不同。也可从 [导入模板](docs/import-template.txt) 开始编辑；[错误示例](docs/import-errors-example.txt) 可用于检查行号提示。文件每行一题，八列顺序为：
 
 ```text
 分类<Tab>题干<Tab>选项A<Tab>选项B<Tab>选项C<Tab>选项D<Tab>答案<Tab>解析
