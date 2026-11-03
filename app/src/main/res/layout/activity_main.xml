@@ -7,8 +7,17 @@
             android:text="行测随身练" android:textSize="28sp" android:textStyle="bold" />
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
             android:layout_marginTop="8dp" android:text="随时刷题，回顾错题" />
+        <TextView android:id="@+id/question_count" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_marginTop="20dp"
+            android:text="正在读取题库…" android:textSize="18sp" />
         <Button android:id="@+id/start_practice" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="28dp" android:text="开始练习" />
+            android:layout_marginTop="16dp" android:text="综合练习" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" android:text="按分类练习" android:textSize="20sp" android:textStyle="bold" />
+        <TextView android:id="@+id/empty_categories" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="暂无题目，请先导入题库。" android:visibility="gone" />
+        <LinearLayout android:id="@+id/category_list" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="vertical" />
         <Button android:id="@+id/import_questions" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="导入题目" />
         <Button android:id="@+id/wrong_book" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="错题本" />
         <Button android:id="@+id/history" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="历史记录" />

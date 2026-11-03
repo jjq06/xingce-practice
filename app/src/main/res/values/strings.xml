@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">行测随身练</string>
+    <string name="question_count">题库共 %1$d 题</string>
+    <string name="category_entry">%1$s · %2$d 题</string>
+    <string name="history_empty">暂无练习记录。完成一次练习后可在这里回看。</string>
+    <string name="history_entry">%1$s · %2$s\n得分 %3$d · 答对 %4$d/%5$d · 正确率 %6$d%% · 用时 %7$d 秒</string>
+    <string name="wrong_empty">暂无错题。答错或未答的题目会出现在这里。</string>
+    <string name="wrong_entry">%1$s · %2$s</string>
+    <string name="invalid_question_count">请输入大于 0 的整数</string>
+    <string name="settings_saved">已保存，下一次练习生效。</string>
 </resources>

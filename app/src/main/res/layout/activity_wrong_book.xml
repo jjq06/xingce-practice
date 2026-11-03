@@ -8,6 +8,10 @@
 
         <TextView android:id="@+id/page_status" android:layout_width="match_parent"
             android:layout_height="wrap_content" android:layout_marginTop="20dp"
-            android:text="页面框架已建立，功能待接入。" />
+            android:text="正在读取错题…" />
+        <Button android:id="@+id/retry_wrong" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="重练错题" android:enabled="false" />
+        <LinearLayout android:id="@+id/wrong_list" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="vertical" />
     </LinearLayout>
 </ScrollView>

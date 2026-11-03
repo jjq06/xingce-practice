@@ -8,6 +8,11 @@
 
         <TextView android:id="@+id/page_status" android:layout_width="match_parent"
             android:layout_height="wrap_content" android:layout_marginTop="20dp"
-            android:text="页面框架已建立，功能待接入。" />
+            android:text="设置每次练习的题目数量" />
+        <EditText android:id="@+id/default_question_count" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:inputType="number" android:maxLines="1"
+            android:hint="默认题数" android:contentDescription="默认练习题数" />
+        <Button android:id="@+id/save_settings" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="保存设置" />
     </LinearLayout>
 </ScrollView>
