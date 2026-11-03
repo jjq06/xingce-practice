@@ -123,15 +123,16 @@
                     android:orientation="vertical" />
             </LinearLayout>
 
-            <Button
+            <TextView
                 android:id="@+id/start_practice"
                 android:layout_width="match_parent"
                 android:layout_height="58dp"
                 android:layout_marginTop="30dp"
                 android:background="@drawable/bg_home_cta"
-                android:backgroundTint="@null"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
                 android:text="开始综合练习  →"
-                android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />

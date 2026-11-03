@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -54,9 +53,9 @@ public class PracticeActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private RadioGroup optionGroup;
     private RadioButton[] optionButtons;
-    private Button prevButton;
-    private Button nextButton;
-    private Button submitButton;
+    private TextView prevButton;
+    private TextView nextButton;
+    private TextView submitButton;
     private View bodyView;
     private View navView;
 
@@ -78,7 +77,10 @@ public class PracticeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setStatusBarColor(getColor(R.color.home_mint));
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         setContentView(R.layout.activity_practice);
+        findViewById(R.id.practice_back).setOnClickListener(v -> finish());
         bindViews();
         bindListeners();
 
@@ -250,7 +252,9 @@ public class PracticeActivity extends AppCompatActivity {
             button.setEnabled(!session.submitted);
         }
         prevButton.setEnabled(session.canGoPrev());
+        prevButton.setAlpha(session.canGoPrev() ? 1f : 0.45f);
         nextButton.setEnabled(session.canGoNext());
+        nextButton.setAlpha(session.canGoNext() ? 1f : 0.45f);
         submitButton.setEnabled(!session.submitted || savedRecordId > 0);
         submitButton.setText(session.submitted ? "查看成绩" : "提交并查看成绩");
         updateProgress();

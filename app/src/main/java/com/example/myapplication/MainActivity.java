@@ -3,7 +3,6 @@ package com.example.myapplication;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Gravity;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -20,7 +19,7 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
     private TextView questionCount;
     private LinearLayout categories;
-    private Button startPractice;
+    private TextView startPractice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
