@@ -71,9 +71,33 @@ public class WrongBookActivity extends AppCompatActivity {
                     stem.setTextSize(17);
                     stem.setPadding(0, dp(8), 0, 0);
                     card.addView(stem);
+
+                    TextView answer = new TextView(this);
+                    answer.setText(getString(R.string.wrong_answer, question.answer, answerText(question)));
+                    answer.setTextColor(getColor(R.color.home_accent_dark));
+                    answer.setTextSize(15);
+                    answer.setPadding(0, dp(14), 0, 0);
+                    card.addView(answer);
+
+                    if (question.explanation != null && !question.explanation.isEmpty()) {
+                        TextView explanation = new TextView(this);
+                        explanation.setText(question.explanation);
+                        explanation.setTextColor(getColor(R.color.home_muted));
+                        explanation.setTextSize(14);
+                        explanation.setPadding(0, dp(6), 0, 0);
+                        card.addView(explanation);
+                    }
                 }
             });
         }).start();
+    }
+
+    private String answerText(Question question) {
+        if ("A".equals(question.answer)) return question.optionA;
+        if ("B".equals(question.answer)) return question.optionB;
+        if ("C".equals(question.answer)) return question.optionC;
+        if ("D".equals(question.answer)) return question.optionD;
+        return "";
     }
 
     private int dp(int value) {

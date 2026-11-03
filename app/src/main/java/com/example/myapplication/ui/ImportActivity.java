@@ -9,9 +9,6 @@ import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.myapplication.R;
 
@@ -25,19 +22,17 @@ public class ImportActivity extends AppCompatActivity {
 
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
+        getWindow().setStatusBarColor(getColor(R.color.home_mint));
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         setContentView(R.layout.activity_import);
-        View root = findViewById(R.id.import_root);
-        ViewCompat.setOnApplyWindowInsetsListener(root, (view, insets) -> {
-            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            view.setPadding(bars.left, bars.top, bars.right, bars.bottom);
-            return insets;
-        });
+        findViewById(R.id.import_back).setOnClickListener(v -> finish());
         TextView status = findViewById(R.id.import_status);
         View button = findViewById(R.id.pick_file);
         model = new ViewModelProvider(this).get(ImportViewModel.class);
         model.state().observe(this, value -> {
             status.setText(value.message);
             button.setEnabled(!value.busy);
+            button.setAlpha(value.busy ? 0.5f : 1f);
             findViewById(R.id.import_progress).setVisibility(value.busy ? View.VISIBLE : View.GONE);
         });
         button.setOnClickListener(v -> {
