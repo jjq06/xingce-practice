@@ -1,6 +1,5 @@
 package com.example.myapplication.ui;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -49,8 +48,11 @@ public class ResultActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
+        getWindow().setStatusBarColor(getColor(R.color.home_mint));
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         setContentView(R.layout.activity_result);
         bindViews();
+        findViewById(R.id.result_back).setOnClickListener(v -> finish());
 
         long recordId = getIntent().getLongExtra(AppContract.EXTRA_RECORD_ID, -1L);
         if (recordId <= 0L) {
@@ -137,50 +139,56 @@ public class ResultActivity extends AppCompatActivity {
         }
     }
 
-    private TextView buildDetailView(int index, AnswerDetail detail, Question question) {
+    private LinearLayout buildDetailView(int index, AnswerDetail detail, Question question) {
         String userAnswer = detail.userAnswer;
         String correctAnswer = question == null ? "—" : question.answer;
+        boolean unanswered = TextUtils.isEmpty(userAnswer);
+        int stateColor = unanswered ? R.color.home_muted
+                : detail.correct ? R.color.home_accent_dark : R.color.result_error;
 
-        StringBuilder text = new StringBuilder();
-        text.append(index).append(". ");
-        if (question == null) {
-            text.append("题目已不存在（ID=").append(detail.questionId).append("）");
-        } else {
-            text.append(question.stem);
-        }
-        text.append('\n').append("你的答案：")
-                .append(TextUtils.isEmpty(userAnswer) ? "未作答" : userAnswer)
-                .append("　正确答案：").append(correctAnswer);
-        if (TextUtils.isEmpty(userAnswer)) {
-            text.append("\n— 未作答，按 0 分计");
-        } else if (detail.correct) {
-            text.append("\n√ 回答正确");
-        } else {
-            text.append("\n× 回答错误");
-        }
-        if (question != null && !TextUtils.isEmpty(question.explanation)) {
-            text.append("\n解析：").append(question.explanation);
-        }
-
-        String color;
-        if (TextUtils.isEmpty(userAnswer)) {
-            color = "#757575";
-        } else if (detail.correct) {
-            color = "#2E7D32";
-        } else {
-            color = "#C62828";
-        }
-
-        TextView view = new TextView(this);
-        view.setText(text.toString());
-        view.setTextSize(14f);
-        view.setLineSpacing(0f, 1.25f);
-        view.setTextColor(Color.parseColor(color));
+        LinearLayout card = new LinearLayout(this);
+        card.setOrientation(LinearLayout.VERTICAL);
+        card.setBackgroundResource(R.drawable.bg_home_card);
+        card.setPadding(dp(20), dp(18), dp(20), dp(20));
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.topMargin = dp(12);
-        view.setLayoutParams(params);
-        return view;
+        params.bottomMargin = dp(12);
+        card.setLayoutParams(params);
+
+        TextView state = new TextView(this);
+        state.setText("第 " + index + " 题  ·  "
+                + (unanswered ? "未作答" : detail.correct ? "回答正确" : "回答错误"));
+        state.setTextColor(getColor(stateColor));
+        state.setTextSize(14);
+        state.setTypeface(null, android.graphics.Typeface.BOLD);
+        card.addView(state);
+
+        TextView stem = new TextView(this);
+        stem.setText(question == null ? "题目已不存在（ID=" + detail.questionId + "）" : question.stem);
+        stem.setTextColor(getColor(R.color.home_ink));
+        stem.setTextSize(17);
+        stem.setTypeface(null, android.graphics.Typeface.BOLD);
+        stem.setLineSpacing(dp(4), 1f);
+        stem.setPadding(0, dp(12), 0, dp(12));
+        card.addView(stem);
+
+        TextView answers = new TextView(this);
+        answers.setText("你的答案  " + (unanswered ? "未作答" : userAnswer)
+                + "     正确答案  " + correctAnswer);
+        answers.setTextColor(getColor(stateColor));
+        answers.setTextSize(14);
+        card.addView(answers);
+
+        if (question != null && !TextUtils.isEmpty(question.explanation)) {
+            TextView explanation = new TextView(this);
+            explanation.setText("解析\n" + question.explanation);
+            explanation.setTextColor(getColor(R.color.home_muted));
+            explanation.setTextSize(14);
+            explanation.setLineSpacing(dp(3), 1f);
+            explanation.setPadding(0, dp(14), 0, 0);
+            card.addView(explanation);
+        }
+        return card;
     }
 
     private void addNote(String message) {
@@ -188,7 +196,7 @@ public class ResultActivity extends AppCompatActivity {
         note.setText(message);
         note.setTextSize(14f);
         note.setLineSpacing(0f, 1.2f);
-        note.setTextColor(Color.parseColor("#757575"));
+        note.setTextColor(getColor(R.color.home_muted));
         detailsView.addView(note);
     }
 
