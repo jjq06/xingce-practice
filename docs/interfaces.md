@@ -22,7 +22,7 @@
 | `PracticeRecord` | `id`, `category`, `startedAt`, `submittedAt`, `questionCount`, `correctCount`, `score`, `durationSeconds` | 时间为 Unix 毫秒；用时为秒；每题 10 分；`category` 为本次练习类别，综合练习使用 `全部` |
 | `AnswerDetail` | `id`, `recordId`, `questionId`, `userAnswer`, `correct` | 未答题的 `userAnswer == null`；`correct == false`；每道已提交题均保存一条 |
 
-数据库表名与列名固定为 `questions`、`practice_records`、`answer_details`、`wrong_questions`，列定义见 `AppDatabaseHelper.onCreate()`。数据库版本当前为 1。更改表结构必须提高版本并提供迁移，不得直接清库。
+数据库表名与列名固定为 `questions`、`practice_records`、`answer_details`、`wrong_questions`，列定义见 `AppDatabaseHelper.onCreate()`。数据库版本当前为 2。v1 → v2 保留原有四张表和全部旧数据，只在升级事务中补入示例题库。新安装建表时即导入 30 题，升级可能保留旧版额外类别。更改表结构必须提高版本并提供迁移，不得直接清库。
 
 ## Repository 和导入签名
 
@@ -30,12 +30,15 @@
 
 ```java
 new QuestionRepository(context).count();
+new QuestionRepository(context).count(category); // null 表示总数
+new QuestionRepository(context).categoryCounts(); // Map<String, Integer>，按类别排序
 new QuestionRepository(context).categories();
 new QuestionRepository(context).findByCategory(category, limit);
 new QuestionRepository(context).findById(questionId);
 new QuestionRepository(context).insertAll(questions);
 
 new QuestionImporter().parse(reader, source); // ParseResult.questions / errors
+new QuestionImporter().parseUtf8(inputStream, source); // 严格 UTF-8 解码，关闭流
 
 new PracticeRepository(context).save(record, answers); // 返回 recordId
 new PracticeRepository(context).findById(recordId);
@@ -46,7 +49,9 @@ new PracticeRepository(context).wrongQuestionIds();
 
 `category == null` 表示全部分类；`findByCategory` 随机取最多 `limit` 题，`limit` 必须大于零，题库不足时返回已有题目。`findById` 查询不到返回 `null`。`insertAll` 返回实际新增数，重复指纹跳过。`parse` 返回合法题与含行号的错误文本；合法行即使文件其他行出错也保留。`Reader` 由 `parse` 关闭。
 
-`PracticeRepository` 的五个方法目前是**已定签名、待实现功能**，会抛出 `UnsupportedOperationException`，调用方应在对应功能完成后接入。实现时 `save` 必须在一个事务内写入记录、每题答案并更新错题本；提交一次只产生一条记录。`findById` 查不到返回 `null`；`findAnswers`、`history`、`wrongQuestionIds` 无数据时返回空列表。`history` 按提交时间降序。错题本的同一题仅存一条，答对后移除。
+`PracticeRepository` 的五个方法已实现。`save` 在一个事务内写入记录、每题答案并更新错题本；异常会整体回滚。提交前填写 `questionCount`、Unix 毫秒 `startedAt` / `submittedAt` 和每道题的 `questionId` / `userAnswer`（未答为 null）。Repository 根据库内正确答案回算并回填 `correctCount`、`score`、`durationSeconds` 和答案的 `correct`，避免保存不一致的汇总。重复题 ID、非法选项、题数不符、未知题目或时间倒序会抛 `IllegalArgumentException`。
+
+`save` 成功后回填 `record.id` 和 `answers.recordId`。重复保存同一模型，或带有既存 `record.id` 的模型，直接返回原 ID，不重写答案或累计错题次数。成员 B 必须在会话状态中保留返回的 ID，并在页面恢复后复用，不能为同一次提交创建一个 ID 为 0 的全新模型。不同练习即使答案相同，也应创建新记录。`findById` 查不到返回 `null`；`findAnswers`、`history`、`wrongQuestionIds` 无数据时返回空列表。`history` 按提交时间降序。错题本的同一题仅存一条，答错或未答累计次数，答对后移除。答案按提交时的列表顺序返回，历史同一时间按 ID 倒序。
 
 ## 页面参数与设置
 
@@ -73,3 +78,7 @@ new PracticeRepository(context).wrongQuestionIds();
 - 首页与记录模块维护首页、错题本、历史、设置；通过 Repository 查询，不依赖练习页内部状态。
 
 修改公共模型字段、Repository 签名、Intent 键或数据库版本时，同一提交更新本文件，并通知其他模块负责人。
+
+## 数据库生命周期与线程
+
+`PracticeApplication` 在首次启动时建库并导入小型内置题库。所有生产 Repository 共用应用级 `AppDatabaseHelper`；页面不要关闭共享数据库。查询返回独立模型，不持有 Cursor。页面应将批量查询和写入安排在后台线程；导入页用 ViewModel 与单线程执行器处理，旋转时不重复导入。

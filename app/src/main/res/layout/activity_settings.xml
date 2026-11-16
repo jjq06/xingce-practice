@@ -1,13 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:orientation="vertical" android:padding="24dp">
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="设置" android:textSize="24sp" android:textStyle="bold" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_home_page"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
 
-        <TextView android:id="@+id/page_status" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:layout_marginTop="20dp"
-            android:text="页面框架已建立，功能待接入。" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/home_mint"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:id="@+id/settings_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="返回"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:text="‹"
+            android:textColor="@color/home_ink"
+            android:textSize="36sp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:text="练习设置"
+            android:textColor="@color/home_ink"
+            android:textSize="23sp"
+            android:textStyle="bold" />
     </LinearLayout>
-</ScrollView>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:paddingTop="32dp"
+            android:paddingBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="按自己的节奏练习"
+                android:textColor="@color/home_ink"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="设置每次普通练习抽取的题目数量。"
+                android:textColor="@color/home_muted"
+                android:textSize="15sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/bg_home_card"
+                android:orientation="vertical"
+                android:padding="22dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="每次练习题数"
+                    android:textColor="@color/home_ink"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/default_question_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/bg_home_category"
+                    android:contentDescription="默认练习题数"
+                    android:hint="输入题数"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:paddingStart="18dp"
+                    android:paddingEnd="18dp"
+                    android:textColor="@color/home_ink"
+                    android:textSize="22sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:text="请输入大于 0 的整数。普通练习最多抽取 100 题；题库不足时使用已有题目。"
+                    android:textColor="@color/home_muted"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/page_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:accessibilityLiveRegion="polite"
+                android:text="修改后从下一次练习开始生效。"
+                android:textColor="@color/home_accent_dark"
+                android:textSize="15sp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:id="@+id/save_settings"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_home_cta"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="保存设置"
+            android:textColor="@color/white"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</LinearLayout>
